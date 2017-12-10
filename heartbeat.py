@@ -24,7 +24,8 @@ class Platform:
 		else:
 			pass
 #			print('Platform Value {} means Windows'.format(self.platformValue))
-
+	def setPlatformValue(self, val):
+		self.platformValue = val
 	def setChunkSize(self,val):
 		self.chunkSize = val
 # Getter for this object. Returns the platformValue's value
@@ -42,6 +43,7 @@ class Parser:
 	mails = []
 	ips = []
 	knownDomains = []
+	sentences = []
 	
 # This is the Class's Constructor
 	def __init__(self,src_file,platform):
@@ -103,7 +105,7 @@ class Parser:
 			if index < chunkSize:
 				parserObject.findURLs(self.data[current])
 			index+=1
-		#print(parserObject.getSysPaths())
+		#print(parserObject.getURLs())
 
 	def heuristicMails(self, chunkNumber, chunkSize):
 		index = 0
@@ -112,7 +114,7 @@ class Parser:
 			if index < chunkSize:
 				parserObject.findMails(self.data[current])
 			index+=1
-		#print(parserObject.getSysPaths())
+		#print(parserObject.getMails())
 
 	def heuristicIPs(self, chunkNumber, chunkSize):
 		index = 0
@@ -121,7 +123,16 @@ class Parser:
 			if index < chunkSize:
 				parserObject.findIPs(self.data[current])
 			index+=1
-		#print(parserObject.getSysPaths())
+		#print(parserObject.getIPs())
+
+	def heuristicIPs(self, chunkNumber, chunkSize):
+		index = 0
+		print("[*] Iteration [%d] ===>> Looking for Sentences ... " %(chunkNumber))
+		for current in range(chunkNumber*chunkSize,len(self.data)):
+			if index < chunkSize:
+				parserObject.findSentences(self.data[current])
+			index+=1
+		#print(parserObject.getSentences())
 
 
 # This defines a regex to find URL-format Strings.
@@ -229,6 +240,18 @@ class Parser:
 	    	stop = time.time()
 	#    	print ('Thread Execution Took %d' % (stop-start))
 
+	def findSentences(self,chunk):
+		start = time.time()
+	    	res = re.findall(r'([. ]+)',chunk)
+	    	index = 0
+	    	if res:
+			for i in res:
+			    #print ('\tReg: %s' % (i) )
+			    if not i in self.sentences:
+			    	self.sentences.append(i)
+			    index += 1
+	    	stop = time.time()
+	#    	print ('Thread Execution Took %d' % (stop-start))
 
 # this method returns the whole data extracted from file
 	def getData(self):
@@ -247,6 +270,8 @@ class Parser:
 		return self.mails
 	def getIPs(self):
 		return self.ips
+	def getSentences(self):
+		return self.sentences
 
 
 class DBS:
@@ -392,6 +417,7 @@ print(5*"\n")
 
 # setting up the platform as being Unix
 platform = Platform(0)
+platform.setPlatformValue(0)
 platform.setChunkSize(100)
 filename = ""
 def envs():
@@ -433,7 +459,7 @@ def menu():
 			print("run\t\t\tSimply Start the Magic")
 
 		if "show" in inData:
-			print("Platform \t%d\nChunkSize \t%d\nFile \t\t%s\n" %(platform.getPlatformValue(), platform.getChunkSize(), filename))
+			print("Platform \t%s\nChunkSize \t%d\nFile \t\t%s\n" %(platform.getPlatformValue(), platform.getChunkSize(), filename))
 		if "run" in inData:
 			if envs() == 0:
 				print "moving on"
@@ -518,6 +544,8 @@ for i in range(0,chunkNumber):
 	threads.append(t)
 	t = threading.Thread(target=parserObject.heuristicIPs, args=(i, chunkSize))
 	threads.append(t)
+	t = threading.Thread(target=parserObject.heuristicSentences, args=(i, chunkSize))
+	threads.append(t)
 	# TODO: here i will put the thread syntax for other scanning methods
 
 
@@ -536,6 +564,7 @@ urls = parserObject.getURLs()
 mails = parserObject.getMails()
 ips = parserObject.getIPs()
 domains = parserObject.getDomains()
+#sentences = parserObject.getSentences()
 
 print("[*] Displaying Verbose Information")
 index = 0
@@ -578,6 +607,12 @@ print("[%d] IP Addresses Found" %(len(ips)))
 for ip in ips:
 	print("\t[%d] %s" %(index, ip))
 	index +=1
+index = 0
+print("[%d] Sentences Found" %(len(sentences)))
+for sentence in sentences:
+	print("\t[%d] %s" %(index, sentence))
+	index +=1
+
 stopTime = time.time()
 print(60*'-')
 print("Execution Took: %f seconds" %(stopTime-startTime))
