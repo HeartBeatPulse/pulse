@@ -70,70 +70,6 @@ class Parser:
 				self.knownDomains.append(t[:-1])
 
 
-	def heuristicRegs(self, chunkNumber, chunkSize):
-		index = 0
-		print("[*] Iteration [%d] ===>> Looking for Registry Keys ... " %(chunkNumber))
-		for current in range(chunkNumber*chunkSize,len(self.data)):
-			if index < chunkSize:
-				parserObject.findRegs(self.data[current])
-			index+=1
-		#print(parserObject.getRegs())
-
-	def heuristicDLL(self, chunkNumber, chunkSize):
-		index = 0
-		print("[*] Iteration [%d] ===>> Looking for DLLs ... " %(chunkNumber))
-		for current in range(chunkNumber*chunkSize,len(self.data)):
-			if index < chunkSize:
-				parserObject.findDLL(self.data[current])
-			index+=1
-		#print(parserObject.getDLL())
-
-
-	def heuristicSysPaths(self, chunkNumber, chunkSize):
-		index = 0
-		print("[*] Iteration [%d] ===>> Looking for System Paths ... " %(chunkNumber))
-		for current in range(chunkNumber*chunkSize,len(self.data)):
-			if index < chunkSize:
-				parserObject.findSystemPaths(self.data[current])
-			index+=1
-		#print(parserObject.getSysPaths())
-	
-	def heuristicURLs(self, chunkNumber, chunkSize):
-		index = 0
-		print("[*] Iteration [%d] ===>> Looking for URLs ... " %(chunkNumber))
-		for current in range(chunkNumber*chunkSize,len(self.data)):
-			if index < chunkSize:
-				parserObject.findURLs(self.data[current])
-			index+=1
-		#print(parserObject.getURLs())
-
-	def heuristicMails(self, chunkNumber, chunkSize):
-		index = 0
-		print("[*] Iteration [%d] ===>> Looking for Mails ... " %(chunkNumber))
-		for current in range(chunkNumber*chunkSize,len(self.data)):
-			if index < chunkSize:
-				parserObject.findMails(self.data[current])
-			index+=1
-		#print(parserObject.getMails())
-
-	def heuristicIPs(self, chunkNumber, chunkSize):
-		index = 0
-		print("[*] Iteration [%d] ===>> Looking for IP Addresses ... " %(chunkNumber))
-		for current in range(chunkNumber*chunkSize,len(self.data)):
-			if index < chunkSize:
-				parserObject.findIPs(self.data[current])
-			index+=1
-		#print(parserObject.getIPs())
-
-	def heuristicIPs(self, chunkNumber, chunkSize):
-		index = 0
-		print("[*] Iteration [%d] ===>> Looking for Sentences ... " %(chunkNumber))
-		for current in range(chunkNumber*chunkSize,len(self.data)):
-			if index < chunkSize:
-				parserObject.findSentences(self.data[current])
-			index+=1
-		#print(parserObject.getSentences())
-
 
 # This defines a regex to find URL-format Strings.
 # it will match:
@@ -152,7 +88,6 @@ class Parser:
 	    	res = re.findall(r'((https?:\/\/)?(ww[w0-9]+\.)?[a-zA-Z0-9\.\-\_\[\]\{\(\)]+\.[\[\]\{\(\)a-zA-Z]{2,7})',chunk)
 	    	index = 0
 	    	if res:
-
 # This section is a check loop, for instance you might have 'ex.com' which could be skipped,
 # so the loop will parse it and it will print it on the screen.
 #
@@ -242,7 +177,7 @@ class Parser:
 
 	def findSentences(self,chunk):
 		start = time.time()
-	    	res = re.findall(r'([. ]+)',chunk)
+	    	res = re.findall(r'([a-zA-Z0-9]+\s[a-zA-Z0-9]+)',chunk)
 	    	index = 0
 	    	if res:
 			for i in res:
@@ -252,6 +187,77 @@ class Parser:
 			    index += 1
 	    	stop = time.time()
 	#    	print ('Thread Execution Took %d' % (stop-start))
+
+
+
+	def heuristicRegs(self, chunkNumber, chunkSize):
+		index = 0
+		print("[*] Iteration [%d] ===>> Looking for Registry Keys ... " %(chunkNumber))
+		for current in range(chunkNumber*chunkSize,len(self.data)):
+			if index < chunkSize:
+				self.findRegs(self.data[current])
+			index+=1
+		#print(parserObject.getRegs())
+
+	def heuristicDLL(self, chunkNumber, chunkSize):
+		index = 0
+		print("[*] Iteration [%d] ===>> Looking for DLLs ... " %(chunkNumber))
+		for current in range(chunkNumber*chunkSize,len(self.data)):
+			if index < chunkSize:
+				self.findDLL(self.data[current])
+			index+=1
+		#print(parserObject.getDLL())
+
+
+	def heuristicSysPaths(self, chunkNumber, chunkSize):
+		index = 0
+		print("[*] Iteration [%d] ===>> Looking for System Paths ... " %(chunkNumber))
+		for current in range(chunkNumber*chunkSize,len(self.data)):
+			if index < chunkSize:
+				self.findSystemPaths(self.data[current])
+			index+=1
+		#print(parserObject.getSysPaths())
+	
+	def heuristicURLs(self, chunkNumber, chunkSize):
+		index = 0
+		print("[*] Iteration [%d] ===>> Looking for URLs ... " %(chunkNumber))
+		for current in range(chunkNumber*chunkSize,len(self.data)):
+			if index < chunkSize:
+				self.findURLs(self.data[current])
+			index+=1
+		#print(parserObject.getURLs())
+
+	def heuristicMails(self, chunkNumber, chunkSize):
+		index = 0
+		print("[*] Iteration [%d] ===>> Looking for Mails ... " %(chunkNumber))
+		for current in range(chunkNumber*chunkSize,len(self.data)):
+			if index < chunkSize:
+				self.findMails(self.data[current])
+			index+=1
+		#print(parserObject.getMails())
+
+	def heuristicIPs(self, chunkNumber, chunkSize):
+		index = 0
+		print("[*] Iteration [%d] ===>> Looking for IP Addresses ... " %(chunkNumber))
+		for current in range(chunkNumber*chunkSize,len(self.data)):
+			if index < chunkSize:
+				self.findIPs(self.data[current])
+			index+=1
+		#print(parserObject.getIPs())
+
+	def heuristicSentences(self, chunkNumber, chunkSize):
+		index = 0
+		print("[*] Iteration [%d] ===>> Looking for Sentences ... " %(chunkNumber))
+		for current in range(chunkNumber*chunkSize,len(self.data)):
+			if index < chunkSize:
+				self.findSentences(self.data[current])
+			index+=1
+		#print(parserObject.getSentences())
+
+
+
+
+
 
 # this method returns the whole data extracted from file
 	def getData(self):
@@ -316,21 +322,14 @@ class DBS:
 
 
 class FileClass:
+	path = ""
+	name = ""
 # This is the Class's Constructor
 	def __init__(self):
-		pass
-	def __init__(self,name,hashValue,size,signature):
-		if "/" in name:
-			parts = filename.split('/')
-			filename = parts[len(parts)-1]
-		else:
-			filename = name
-		self.name = filename
-		self.hashValue = hashValue
-		self.size = size
-		self.signature = signature
+		print("[*] New File Object")
 
-	def __init__(self,name):
+	def calcFeatures(self,name):
+		self.path = name
 		self.hashValue = self.calcHash(name)
 		self.size = self.calcFileSize(name)
 		self.signature = self.calcSignature(name)
@@ -344,7 +343,6 @@ class FileClass:
 #		print self.hashValue
 #		print self.size
 #		print self.signature
-
 # see how much space is needed for the file in cause
 
 	def calcFileSize(self, fd):
@@ -371,6 +369,9 @@ class FileClass:
 			h.update(buf)
 # where to save the results
 		return h.hexdigest()
+# set up the file name/path
+	def setName(self, fname):
+		self.name = fname
 
 # returns the name of the file
 	def getFileName(self):
@@ -387,6 +388,9 @@ class FileClass:
 # returns the signature of the file
 	def getFileSignature(self):
 		return self.signature
+# returns the file's path
+	def getFilePath(self):
+		return self.path
 
 ####################################################################
 # Actual code
@@ -415,26 +419,23 @@ print("For help just type 'help', without quotes")
 print("By default the platform is set to Linux")
 print(5*"\n")
 
-# setting up the platform as being Unix
-platform = Platform(0)
-platform.setPlatformValue(0)
-platform.setChunkSize(100)
-filename = ""
-def envs():
+def envs(filename):
 	if filename == "":
 		return 1
 	else:
 		return 0
-def menu():
+
+def menu(file_1,platform,chunk):
+	filename = ""
 	while(1):
 		inData = raw_input("~COMM$> ")
 		if "platform" in inData:
 			d = inData.split('=')
 			env = d[len(d)-1]
 			if 'linux' in env:
-				platform = Platform(0) # means linux
+				platform.setPlatformValue(0) # means linux
 			elif 'windows' in env or 'win' in env:
-				platform = Platform(1) # means windows
+				platform.setPlatformValue(1) # means windows
 		if "chunkSize" in inData:
 			d = inData.split('=')
 			env = d[len(d)-1]
@@ -448,6 +449,7 @@ def menu():
 			else:
 				filename = env
 			print filename
+			file_1.setName(filename)
 		if "exit" in inData:
 			sys.exit(0)
 		if "help" in inData:
@@ -459,166 +461,174 @@ def menu():
 			print("run\t\t\tSimply Start the Magic")
 
 		if "show" in inData:
-			print("Platform \t%s\nChunkSize \t%d\nFile \t\t%s\n" %(platform.getPlatformValue(), platform.getChunkSize(), filename))
+			print("Platform \t%s\nChunkSize \t%s\nFile \t\t%s\n" %(platform.getPlatformValue(), platform.getChunkSize(), file_1.getFileName()))
 		if "run" in inData:
-			if envs() == 0:
+			if envs(filename) == 0:
 				print "moving on"
 				break
 
+def main():
+	# setting up the platform as being Unix
+	platform = Platform(0)
+	platform.setPlatformValue(0)
+	platform.setChunkSize(100)
+	filename = ""
+	file_1 = FileClass()
+	menu(file_1,platform,platform.getChunkSize())
+	filename = file_1.getFileName()
+	file_1.calcFeatures(file_1.getFileName())
+	startTime = time.time()
+	#for i in range(0,len(sys.argv)):
+	#	if "--platform" in sys.argv[i]:
+	#		platform = Platform(int(sys.argv[i+1]))
+	#	if "--chunkSize" in sys.argv[i]:
+	#		platform.setChunkSize(int(sys.argv[i+1]))
+	#	if "--file" in sys.argv[i]:
+	#		filename = sys.argv[i+1]
 
-menu()
-startTime = time.time()
-#for i in range(0,len(sys.argv)):
-#	if "--platform" in sys.argv[i]:
-#		platform = Platform(int(sys.argv[i+1]))
-#	if "--chunkSize" in sys.argv[i]:
-#		platform.setChunkSize(int(sys.argv[i+1]))
-#	if "--file" in sys.argv[i]:
-#		filename = sys.argv[i+1]
 
-
-#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 
 
-file_1 = FileClass(filename)
+	
 
+	# Objects instantiation
+	databaseObject = DBS()
 
-# Objects instantiation
-databaseObject = DBS()
+	# setting up the dbs.txt file to read the entries already scanned by this script
+	memoryData = databaseObject.getDatabaseEntries()
+	#if len(memoryData) > 0:
+	#	print(memoryData)
+	#else:
+	#	print("No entries found")
+	lookFor = file_1.getFileHash()
+	compareWithName = file_1.getFileName()
 
-# setting up the dbs.txt file to read the entries already scanned by this script
-memoryData = databaseObject.getDatabaseEntries()
-#if len(memoryData) > 0:
-#	print(memoryData)
-#else:
-#	print("No entries found")
-lookFor = file_1.getFileHash()
-compareWithName = file_1.getFileName()
-
-print "Associating ", lookFor, 'with', compareWithName
-try:
-	if not lookFor in memoryData[compareWithName]:
+	print "Associating ", lookFor, 'with', compareWithName
+	try:
+		if not lookFor in memoryData[compareWithName]:
+			print "[*] No related files found!"
+			print "[*] Adding this to the Memory Lane"
+			databaseObject.setNewEntry(file_1.getFileName(), file_1.getFileHash(), file_1.getFileSize(), file_1.getFileSignature())
+		else:
+			print "[*] FOUND IT", compareWithName, memoryData[compareWithName]
+	except:
 		print "[*] No related files found!"
 		print "[*] Adding this to the Memory Lane"
 		databaseObject.setNewEntry(file_1.getFileName(), file_1.getFileHash(), file_1.getFileSize(), file_1.getFileSignature())
-	else:
-		print "[*] FOUND IT", compareWithName, memoryData[compareWithName]
-except:
-	print "[*] No related files found!"
-	print "[*] Adding this to the Memory Lane"
-	databaseObject.setNewEntry(file_1.getFileName(), file_1.getFileHash(), file_1.getFileSize(), file_1.getFileSignature())
 
-#++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	#++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 
 
 
-parserObject = Parser(filename, platform.getPlatformValue())
+	parserObject = Parser(file_1.getFilePath(), platform.getPlatformValue())
 
-wholeData = parserObject.getData()
+	wholeData = parserObject.getData()
 
-chunkSize = platform.getChunkSize()
-chunkNumber = -(-len(wholeData)//chunkSize)
-print ("There will be %d chunks of Data ( %d chunks * %d rounds )" % (chunkNumber,chunkNumber,chunkSize))
-
-
-# keep the threads used for searching
-threads = []
+	chunkSize = platform.getChunkSize()
+	chunkNumber = -(-len(wholeData)//chunkSize)
+	print ("There will be %d chunks of Data ( %d chunks * %d rounds )" % (chunkNumber,chunkNumber,chunkSize))
 
 
-
-# go through every chunk by incrementing 'i'
-for i in range(0,chunkNumber):
-	t = threading.Thread(target=parserObject.heuristicDLL, args=(i, chunkSize))
-	threads.append(t)
-	t = threading.Thread(target=parserObject.heuristicRegs, args=(i, chunkSize))
-	threads.append(t)
-	t = threading.Thread(target=parserObject.heuristicSysPaths, args=(i, chunkSize))
-	threads.append(t)
-	t = threading.Thread(target=parserObject.heuristicURLs, args=(i, chunkSize))
-	threads.append(t)
-	t = threading.Thread(target=parserObject.heuristicMails, args=(i, chunkSize))
-	threads.append(t)
-	t = threading.Thread(target=parserObject.heuristicIPs, args=(i, chunkSize))
-	threads.append(t)
-	t = threading.Thread(target=parserObject.heuristicSentences, args=(i, chunkSize))
-	threads.append(t)
-	# TODO: here i will put the thread syntax for other scanning methods
+	# keep the threads used for searching
+	threads = []
 
 
 
-# starting the threads created above
-for thread in threads:
-	thread.start()
-	thread.join()
-
-# output the results
-# TODO: Here i will put the other methods's output
-dlls = parserObject.getDLL()
-regs = parserObject.getRegs()
-paths = parserObject.getSysPaths()
-urls = parserObject.getURLs()
-mails = parserObject.getMails()
-ips = parserObject.getIPs()
-domains = parserObject.getDomains()
-#sentences = parserObject.getSentences()
-
-print("[*] Displaying Verbose Information")
-index = 0
-print("[%d] Imported DLL files" %(len(dlls)))
-for dll in dlls:
-	print("\t[%d] %s" %(index, dll))
-	index +=1
-index = 0
-print("[%d] Registry Paths Found" %(len(regs)))
-for reg in regs:
-	print("\t[%d] %s" %(index, reg))
-	index +=1
-index = 0
-print("[%d] System Paths Found" %(len(paths)))
-for path in paths:
-	print("\t[%d] %s" %(index, path))
-	index +=1
-index = 0
-print("[%d] URLs Found" %(len(urls)))
-for url in urls:
-	ok = 0
-	for d in domains:
-		if url.endswith(d) or url.endswith(d[1:]):
-#			pass
-			ok = 1
-			break
-	if ok == 1:
-		print("\t[%d] %s" %(index, url))
-	else:
-		print("\t\t[%d] %s FALSE POSITIVE" %(index, url))			
-	index +=1
-
-index = 0
-print("[%d] Mails Found" %(len(mails)))
-for mail in mails:
-	print("\t[%d] %s" %(index, mail))
-	index +=1
-index = 0
-print("[%d] IP Addresses Found" %(len(ips)))
-for ip in ips:
-	print("\t[%d] %s" %(index, ip))
-	index +=1
-index = 0
-print("[%d] Sentences Found" %(len(sentences)))
-for sentence in sentences:
-	print("\t[%d] %s" %(index, sentence))
-	index +=1
-
-stopTime = time.time()
-print(60*'-')
-print("Execution Took: %f seconds" %(stopTime-startTime))
-#sys.exit(0)
+	# go through every chunk by incrementing 'i'
+	for i in range(0,chunkNumber):
+		t = threading.Thread(target=parserObject.heuristicDLL, args=(i, chunkSize))
+		threads.append(t)
+		t = threading.Thread(target=parserObject.heuristicRegs, args=(i, chunkSize))
+		threads.append(t)
+		t = threading.Thread(target=parserObject.heuristicSysPaths, args=(i, chunkSize))
+		threads.append(t)
+		t = threading.Thread(target=parserObject.heuristicURLs, args=(i, chunkSize))
+		threads.append(t)
+		t = threading.Thread(target=parserObject.heuristicMails, args=(i, chunkSize))
+		threads.append(t)
+		t = threading.Thread(target=parserObject.heuristicIPs, args=(i, chunkSize))
+		threads.append(t)
+		t = threading.Thread(target=parserObject.heuristicSentences, args=(i, chunkSize))
+		threads.append(t)
+		# TODO: here i will put the thread syntax for other scanning methods
 
 
+
+	# starting the threads created above
+	for thread in threads:
+		thread.start()
+		thread.join()
+
+	# output the results
+	# TODO: Here i will put the other methods's output
+	dlls = parserObject.getDLL()
+	regs = parserObject.getRegs()
+	paths = parserObject.getSysPaths()
+	urls = parserObject.getURLs()
+	mails = parserObject.getMails()
+	ips = parserObject.getIPs()
+	domains = parserObject.getDomains()
+	sentences = parserObject.getSentences()
+
+	print("[*] Displaying Verbose Information")
+	index = 0
+	print("[%d] Imported DLL files" %(len(dlls)))
+	for dll in dlls:
+		print("\t[%d] %s" %(index, dll))
+		index +=1
+	index = 0
+	print("[%d] Registry Paths Found" %(len(regs)))
+	for reg in regs:
+		print("\t[%d] %s" %(index, reg))
+		index +=1
+	index = 0
+	print("[%d] System Paths Found" %(len(paths)))
+	for path in paths:
+		print("\t[%d] %s" %(index, path))
+		index +=1
+	index = 0
+	print("[%d] URLs Found" %(len(urls)))
+	for url in urls:
+		ok = 0
+		for d in domains:
+			if url.endswith(d) or url.endswith(d[1:]):
+	#			pass
+				ok = 1
+				break
+		if ok == 1:
+			print("\t[%d] %s" %(index, url))
+		else:
+			pass
+#			print("\t\t[%d] %s FALSE POSITIVE" %(index, url))			
+		index +=1
+
+	index = 0
+	print("[%d] Mails Found" %(len(mails)))
+	for mail in mails:
+		print("\t[%d] %s" %(index, mail))
+		index +=1
+	index = 0
+	print("[%d] IP Addresses Found" %(len(ips)))
+	for ip in ips:
+		print("\t[%d] %s" %(index, ip))
+		index +=1
+	index = 0
+	print("[%d] Sentences Found" %(len(sentences)))
+	for sentence in sentences:
+		print("\t[%d] %s" %(index, sentence))
+		index +=1
+
+	stopTime = time.time()
+	print(60*'-')
+	print("Execution Took: %f seconds" %(stopTime-startTime))
+	#sys.exit(0)
+
+if __name__ == "__main__":main()
 
 
 
