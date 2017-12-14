@@ -44,6 +44,7 @@ class Parser:
 	ips = []
 	knownDomains = []
 	sentences = []
+	base64Strings = []
 	
 # This is the Class's Constructor
 	def __init__(self,src_file,platform):
@@ -135,7 +136,7 @@ class Parser:
 
 	def findDLL(self, chunk):
 	    start = time.time()
-	    res = re.findall(r'([a-zA-Z0-9\-]+.dll|[a-zA-Z0-9\-]+.DLL)',chunk)
+	    res = re.findall(r'([a-zA-Z0-9\-]+\.dll|[a-zA-Z0-9\-]+\.DLL)',chunk)
 	    index = 0
 	    if res:
 		for i in res:
@@ -177,17 +178,39 @@ class Parser:
 
 	def findSentences(self,chunk):
 		start = time.time()
-	    	res = re.findall(r'([a-zA-Z0-9]+\s[a-zA-Z0-9]+)',chunk)
+	    	res = re.findall(r'(\w{3,}\s[\w{3,}\s]*)',chunk)
 	    	index = 0
 	    	if res:
 			for i in res:
 			    #print ('\tReg: %s' % (i) )
-			    if not i in self.sentences:
+			    t = i.split(' ')
+			    if not i in self.sentences and len(t) > 2:
 			    	self.sentences.append(i)
 			    index += 1
 	    	stop = time.time()
 	#    	print ('Thread Execution Took %d' % (stop-start))
 
+	def findBase64(self,chunk):
+		start = time.time()
+	    	res = re.findall(r'[a-zA-Z0-9\/\+]{30,}[=]*',chunk)
+	    	index = 0
+	    	if res:
+			for i in res:
+			    if not i in self.base64Strings:
+			    	self.base64Strings.append(i)
+			    index += 1
+	    	stop = time.time()
+	#    	print ('Thread Execution Took %d' % (stop-start))
+
+
+	def heuristicBase64(self, chunkNumber, chunkSize):
+		index = 0
+		print("[*] Iteration [%d] ===>> Looking for Base64 Strings ... " %(chunkNumber))
+		for current in range(chunkNumber*chunkSize,len(self.data)):
+			if index < chunkSize:
+				self.findBase64(self.data[current])
+			index+=1
+		#print(parserObject.getRegs())
 
 
 	def heuristicRegs(self, chunkNumber, chunkSize):
@@ -278,6 +301,8 @@ class Parser:
 		return self.ips
 	def getSentences(self):
 		return self.sentences
+	def getBase64Strings(self):
+		return self.base64Strings
 
 
 class DBS:
@@ -471,7 +496,7 @@ def main():
 	# setting up the platform as being Unix
 	platform = Platform(0)
 	platform.setPlatformValue(0)
-	platform.setChunkSize(100)
+	platform.setChunkSize(10000)
 	filename = ""
 	file_1 = FileClass()
 	menu(file_1,platform,platform.getChunkSize())
@@ -555,6 +580,8 @@ def main():
 		threads.append(t)
 		t = threading.Thread(target=parserObject.heuristicSentences, args=(i, chunkSize))
 		threads.append(t)
+		t = threading.Thread(target=parserObject.heuristicBase64, args=(i, chunkSize))
+		threads.append(t)
 		# TODO: here i will put the thread syntax for other scanning methods
 
 
@@ -574,6 +601,7 @@ def main():
 	ips = parserObject.getIPs()
 	domains = parserObject.getDomains()
 	sentences = parserObject.getSentences()
+	base64Strings = parserObject.getBase64Strings()
 
 	print("[*] Displaying Verbose Information")
 	index = 0
@@ -621,6 +649,14 @@ def main():
 	print("[%d] Sentences Found" %(len(sentences)))
 	for sentence in sentences:
 		print("\t[%d] %s" %(index, sentence))
+		index +=1
+	index = 0
+	print("[%d] Base64 Strings Found" %(len(base64Strings)))
+	for base64String in base64Strings:
+		try:
+			print("\t[%d] %s" %(index, base64String.decode('base64')))
+		except:
+			print("\t[%d] %s" %(index, base64String))
 		index +=1
 
 	stopTime = time.time()
