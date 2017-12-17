@@ -37,6 +37,7 @@ class Platform:
 # This is the main parser, it contains the methods to parse and search inside the extracted data.
 class Parser:
 	dll = []
+	exes = []
 	regs = []
 	paths = []
 	urls = []
@@ -202,6 +203,28 @@ class Parser:
 	    	stop = time.time()
 	#    	print ('Thread Execution Took %d' % (stop-start))
 
+	def findexe(self,chunk):
+		start = time.time()
+	    	res = re.findall(r'([a-zA-Z0-9\-]+\.exe|[a-zA-Z0-9\-]+\.EXE)',chunk)
+	    	index = 0
+	    	if res:
+			for i in res:
+			    if not i in self.exes:
+			    	self.exes.append(i)
+			    index += 1
+	    	stop = time.time()
+	#    	print ('Thread Execution Took %d' % (stop-start))
+
+
+	def heuristicExe(self, chunkNumber, chunkSize):
+		index = 0
+		print("[*] Iteration [%d] ===>> Looking for executables ... " %(chunkNumber))
+		for current in range(chunkNumber*chunkSize,len(self.data)):
+			if index < chunkSize:
+				self.findexe(self.data[current])
+			index+=1
+		#print(parserObject.getRegs())
+
 
 	def heuristicBase64(self, chunkNumber, chunkSize):
 		index = 0
@@ -289,6 +312,8 @@ class Parser:
 		return self.knownDomains
 	def getDLL(self):
 		return self.dll
+	def getExes(self):
+		return self.exes
 	def getRegs(self):
 		return self.regs
 	def getSysPaths(self):
@@ -582,6 +607,8 @@ def main():
 		threads.append(t)
 		t = threading.Thread(target=parserObject.heuristicBase64, args=(i, chunkSize))
 		threads.append(t)
+		t = threading.Thread(target=parserObject.heuristicExe, args=(i, chunkSize))
+		threads.append(t)
 		# TODO: here i will put the thread syntax for other scanning methods
 
 
@@ -594,6 +621,7 @@ def main():
 	# output the results
 	# TODO: Here i will put the other methods's output
 	dlls = parserObject.getDLL()
+	exes = parserObject.getExes()
 	regs = parserObject.getRegs()
 	paths = parserObject.getSysPaths()
 	urls = parserObject.getURLs()
@@ -608,6 +636,11 @@ def main():
 	print("[%d] Imported DLL files" %(len(dlls)))
 	for dll in dlls:
 		print("\t[%d] %s" %(index, dll))
+		index +=1
+	index = 0
+	print("[%d] Executable Files" %(len(exes)))
+	for exe in exes:
+		print("\t[%d] %s" %(index, exe))
 		index +=1
 	index = 0
 	print("[%d] Registry Paths Found" %(len(regs)))
@@ -653,10 +686,10 @@ def main():
 	index = 0
 	print("[%d] Base64 Strings Found" %(len(base64Strings)))
 	for base64String in base64Strings:
-		try:
-			print("\t[%d] %s" %(index, base64String.decode('base64')))
-		except:
-			print("\t[%d] %s" %(index, base64String))
+#		try:
+#			print("\t[%d] %s" %(index, base64String.decode('base64')))
+#		except:
+#			print("\t[%d] %s" %(index, base64String))
 		index +=1
 
 	stopTime = time.time()
